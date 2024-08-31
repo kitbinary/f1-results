@@ -58,7 +58,9 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             "Esteban Ocon": "fr",
             "Sergio Perez": "mx",
             "Valtteri Bottas": "fi",
-            "Zhou Guanyu": "cn"
+            "Zhou Guanyu": "cn",
+            "Logan Sargeant": "us",
+            "Andrea Kimi Antonelli": "it"
         };
 
         rows.forEach(row => {
