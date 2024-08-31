@@ -34,7 +34,18 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             "haas": "Haas Ferrari",
             "rb": "RB Honda RBPT",
             "alp": "Alpine Renault",
-            "stake": "Kick Sauber Ferrari"
+            "stake": "Kick Sauber Ferrari",
+            "rbr": "Red Bull Racing RBPT",
+            "alfa": "Alfa Romeo Ferrari",
+            "at": "AlphaTauri Honda RBPT",
+            "at": "AlphaTauri RBPT",
+            "at": "AlphaTauri Honda",
+            "rbr": "Red Bull Racing Honda",
+            "alfa": "Alfa Romeo Racing Ferrari",
+            "amr": "Aston Martin Mercedes",
+            "rp": "Racing Point BWT Mercedes",
+            "mcl": "McLaren Renault",
+            "renault": "Renault"
         };
 
         // Drivers flags dictionary
@@ -60,7 +71,21 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             "Valtteri Bottas": "fi",
             "Zhou Guanyu": "cn",
             "Logan Sargeant": "us",
-            "Andrea Kimi Antonelli": "it"
+            "Andrea Kimi Antonelli": "it",
+            "Nyck De Vries": "nl",
+            "Liam Lawson": "nz",
+            "Sebastian Vettel": "de",
+            "Mick Schumacher": "de",
+            "Robert Kubica": "pl",
+            "Kimi Räikkönen": "fi",
+            "Kimi Raikkonen": "fi",
+            "Antonio Giovinazzi": "it",
+            "Nikita Mazepin": "ru",
+            "Nicholas Latifi": "ca",
+            "Jack Aitken": "uk",
+            "Pietro Fittipaldi": "br",
+            "Romain Grosjean": "fr",
+            "Daniil Kvyat": "ru"
         };
 
         rows.forEach(row => {
@@ -79,7 +104,7 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
 
             // Use the team code to get the key from the dictionary
             const teamKey = Object.keys(teamCodes).find(key => teamCodes[key] === teamCode);
-            const teamCodeDisplay = teamKey ? teamKey.toLowerCase() : 'unknown';
+            const teamCodeDisplay = teamKey ? teamKey.toLowerCase() : '';
 
             const flag = driversFlags[driverName] || "";
 
