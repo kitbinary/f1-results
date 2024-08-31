@@ -164,7 +164,6 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
 
             const flag = driversFlags[driverName] || "";
 
-            const bestLapSeconds = timeToSeconds(bestLap);
             let interval = '';
 
             if (index === 0) { // First driver
