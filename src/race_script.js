@@ -186,12 +186,16 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
 
             const gapSeconds = parseGapTime(gap);
 
+            // Interval and Gap calculations
             if (index === 0) { // First driver
                 firstDriverGapTime = timeToSeconds(gap);
                 interval = '-';
             } else if (index === 1) { // Second driver
                 lastDriverGapTime = (gapSeconds).toFixed(3);
                 interval = '+' + lastDriverGapTime;
+                
+                // Remove the trailing 's' from gap if it exists
+                gap = gap.replace('s', '');
             }
             else {
                 if (gap.includes('lap')) {
