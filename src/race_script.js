@@ -9,14 +9,16 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
     // Use the input URL and replace "race-result" with "starting-grid" for the grid data
     const raceResultsUrl = inputUrl;
     const startingGridUrl = inputUrl.replace('race-result', 'starting-grid');
+    const pitStopUrl = inputUrl.replace('race-result', 'pit-stop-summary');
     
     const proxyUrl = 'https://api.allorigins.win/raw?url='
 
     try {
         // Fetch both race results and starting grid data
-        const [raceResultsResponse, startingGridResponse] = await Promise.all([
+        const [raceResultsResponse, startingGridResponse, pitStopResponse] = await Promise.all([
             fetch(`${proxyUrl}${encodeURIComponent(raceResultsUrl)}`),
-            fetch(`${proxyUrl}${encodeURIComponent(startingGridUrl)}`)
+            fetch(`${proxyUrl}${encodeURIComponent(startingGridUrl)}`),
+            fetch(`${proxyUrl}${encodeURIComponent(pitStopUrl)}`)
         ]);
 
         // Check if the responses are OK
@@ -32,33 +34,49 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             return;
         }
 
+        if (!pitStopResponse.ok) {
+            console.error('Failed to fetch pit stop summary:', pitStopResponse.status, pitStopResponse.statusText);
+            alert("Failed to fetch pit stop summary.");
+            return;
+        }
+
         const raceResultsHtml = await raceResultsResponse.text();
         const startingGridHtml = await startingGridResponse.text();
+        const pitStopHtml = await pitStopResponse.text();
 
         const parser = new DOMParser();
-        const raceResultsDoc = parser.parseFromString(raceResultsHtml, 'text/html');
-        const startingGridDoc = parser.parseFromString(startingGridHtml, 'text/html');
-
-        const resultsTable = raceResultsDoc.querySelector('.f1-table.f1-table-with-data.w-full');
-        const gridTable = startingGridDoc.querySelector('.f1-table.f1-table-with-data.w-full');
+        const resultsTable = parser.parseFromString(raceResultsHtml, 'text/html').querySelector('.f1-table.f1-table-with-data.w-full');
+        const gridTable = parser.parseFromString(startingGridHtml, 'text/html').querySelector('.f1-table.f1-table-with-data.w-full');
+        const pitStopTable = parser.parseFromString(pitStopHtml, 'text/html').querySelector('.f1-table.f1-table-with-data.w-full');
 
         if (!resultsTable || !gridTable) {
-            alert("Results table or grid table not found.");
+            alert("One or more tables not found.");
             console.log("Results table found:", !!resultsTable);
             console.log("Grid table found:", !!gridTable);
+            console.log("Pit stop table found:", !!pitStopTable);
             return;
         }
         
+        // Get grid positions
         const gridPositions = {};
         const gridRows = gridTable.querySelectorAll('tbody tr');
         gridRows.forEach(row => {
             const columns = row.querySelectorAll('td');
             if (columns.length === 0) return;
 
-            let driverName = columns[2].textContent.trim().slice(0, -3);
-            driverName = driverName.replace(/\u00A0/, " ");
-            const gridPosition = columns[0].textContent.trim();
-            gridPositions[driverName] = gridPosition;
+            let driverName = columns[2].textContent.trim().slice(0, -3).replace(/\u00A0/, " ");
+            gridPositions[driverName] = columns[0].textContent.trim();
+        });
+
+        // Get pit stops
+        const pitStopCount = {};
+        const pitRows = pitStopTable.querySelectorAll('tbody tr');
+        pitRows.forEach(row => {
+            const columns = row.querySelectorAll('td');
+            if (columns.length === 0) return;
+
+            let driverName = columns[2].textContent.trim().slice(0, -3).replace(/\u00A0/, " ");
+            pitStopCount[driverName] = columns[0].textContent.trim();
         });
 
         const rows = resultsTable.querySelectorAll('tbody tr');
@@ -166,7 +184,6 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
 
             const flag = driversFlags[driverName] || "";
 
-
             const gapSeconds = parseGapTime(gap);
 
             if (index === 0) { // First driver
@@ -189,11 +206,11 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
                 }
             }
 
-            console.log(Object.keys(gridPositions).includes("Lando Norris"));
-
             const gridPosition = gridPositions[driverName] || '-';
             const gain = gridPosition !== '-' ? parseInt(gridPosition) - parseInt(position) : '-';
             const formattedGain = gain !== '-' && gain > 0 ? `+${gain}` : gain;
+            
+            const pits = pitStopCount[driverName] || '-';
 
             const resultLine = `|{{RaceResults/Row|pos=${position}` +
                                 ` |driver=${driverName}` +
@@ -202,10 +219,10 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
                                 ` |grid=${gridPosition}` +
                                 ` |gain=${formattedGain}` +
                                 ` |gap=${gap.toUpperCase()}` +
-                                ` |interval=${interval}\n` +
-                                `|pits=` +
-                                ` |tyres=` +
-                                ` |points=${points}\n}}\n`;
+                                ` |pits=${pits}` +
+                                ` |points=${points}\n` +
+                                `|interval=${interval}` +
+                                ` |tyres=\n}}\n`;
             resultsText += resultLine;
         });
 
