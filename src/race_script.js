@@ -59,8 +59,9 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
         });
 
         const rows = resultsTable.querySelectorAll('tbody tr');
-        let firstDriverGapSeconds = null;
+        let lastDriverGapTime = null;
         let resultsText = '';
+        let interval = '';
 
         const teamCodes = {
             "mer": "Mercedes",
@@ -164,21 +165,24 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
 
             const flag = driversFlags[driverName] || "";
 
-            let interval = '';
+
+            const gapSeconds = parseGapTime(gap);
 
             if (index === 0) { // First driver
-                firstDriverGapSeconds = timeToSeconds(gap);
-                gap = '-'
-                interval = '-'
-            } else {
-                const gapSeconds = parseGapTime(gap);
+                firstDriverGapTime = timeToSeconds(gap);
+                interval = '-';
+            } else if (index === 1) {
+                interval = gapSeconds;
+                lastDriverGapTime = interval.toFixed(3);
+                console.log(lastDriverGapTime)
+            }
+            else {
                 if (gap.includes('lap')) {
-                    interval = ''; // Leave interval blank if it includes lap
+                    interval = '';
                 } else {
-                    // Calculate interval based on the first driver's time
-                    const driverTotalTime = firstDriverGapSeconds + gapSeconds;
-                    const intervalSeconds = driverTotalTime - firstDriverGapSeconds;
-                    interval = formatInterval(intervalSeconds);
+                    console.log(lastDriverGapTime, gapSeconds);
+                    interval = Math.abs((lastDriverGapTime - gapSeconds)).toFixed(3);
+                    lastDriverGapTime = gapSeconds;
                 }
             }
 
@@ -195,7 +199,7 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
                                 ` |grid=${gridPosition}` +
                                 ` |gain=${gain}` +
                                 ` |gap=${gap.toUpperCase()}` +
-                                ` |interval=${interval}\n` +
+                                ` |interval=+${interval}\n` +
                                 `|pits=` +
                                 ` |tyres=` +
                                 ` |points=${points}\n}}\n`;
