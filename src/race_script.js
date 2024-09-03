@@ -9,12 +9,14 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
     // Use the input URL and replace "race-result" with "starting-grid" for the grid data
     const raceResultsUrl = inputUrl;
     const startingGridUrl = inputUrl.replace('race-result', 'starting-grid');
+    
+    const proxyUrl = 'https://api.allorigins.win/raw?url='
 
     try {
         // Fetch both race results and starting grid data
         const [raceResultsResponse, startingGridResponse] = await Promise.all([
-            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(raceResultsUrl)}`),
-            fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(startingGridUrl)}`)
+            fetch(`${proxyUrl}${encodeURIComponent(raceResultsUrl)}`),
+            fetch(`${proxyUrl}${encodeURIComponent(startingGridUrl)}`)
         ]);
 
         // Check if the responses are OK
@@ -46,14 +48,15 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             console.log("Grid table found:", !!gridTable);
             return;
         }
-
+        
         const gridPositions = {};
         const gridRows = gridTable.querySelectorAll('tbody tr');
         gridRows.forEach(row => {
             const columns = row.querySelectorAll('td');
             if (columns.length === 0) return;
 
-            const driverName = columns[2].textContent.trim();
+            let driverName = columns[2].textContent.trim().slice(0, -3);
+            driverName = driverName.replace(/\u00A0/, " ");
             const gridPosition = columns[0].textContent.trim();
             gridPositions[driverName] = gridPosition;
         });
@@ -186,15 +189,18 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
                 }
             }
 
+            console.log(Object.keys(gridPositions).includes("Lando Norris"));
+
             const gridPosition = gridPositions[driverName] || '-';
             const gain = gridPosition !== '-' ? parseInt(gridPosition) - parseInt(position) : '-';
+            const formattedGain = gain !== '-' && gain > 0 ? `+${gain}` : gain;
 
             const resultLine = `|{{RaceResults/Row|pos=${position}` +
                                 ` |driver=${driverName}` +
                                 ` |flag=${flag}` +
                                 ` |team=${teamCodeDisplay}` +
                                 ` |grid=${gridPosition}` +
-                                ` |gain=${gain}` +
+                                ` |gain=${formattedGain}` +
                                 ` |gap=${gap.toUpperCase()}` +
                                 ` |interval=${interval}\n` +
                                 `|pits=` +
