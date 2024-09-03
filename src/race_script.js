@@ -95,6 +95,7 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             "alp": "Alpine Renault",
             "stake": "Kick Sauber Ferrari",
             "alfa": "Alfa Romeo Ferrari",
+            "rb": "RB Honda RBPT",
             "at": "AlphaTauri Honda RBPT",
             "amr": "Aston Martin Mercedes",
             "rp": "Racing Point BWT Mercedes",
