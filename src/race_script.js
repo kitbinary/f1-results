@@ -153,10 +153,8 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             const data = Array.from(columns).map(col => col.textContent.trim());
 
             const position = data[0];
-            let driverName = data[2].replace('\xa0', ' ').trim();
-            driverName = driverName.slice(0, -3); // Remove the last 3 characters
+            let driverName = data[2].replace('\xa0', ' ').trim().slice(0, -3);
             const teamCode = data[3];
-            const bestLap = data[4];
             let gap = data[5];
             const points = data[6];
 
@@ -171,26 +169,25 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
             if (index === 0) { // First driver
                 firstDriverGapTime = timeToSeconds(gap);
                 interval = '-';
-            } else if (index === 1) {
-                interval = gapSeconds;
-                lastDriverGapTime = interval.toFixed(3);
-                console.log(lastDriverGapTime)
+            } else if (index === 1) { // Second driver
+                lastDriverGapTime = (gapSeconds).toFixed(3);
+                interval = '+' + lastDriverGapTime;
             }
             else {
                 if (gap.includes('lap')) {
                     interval = '';
                 } else {
-                    console.log(lastDriverGapTime, gapSeconds);
-                    interval = Math.abs((lastDriverGapTime - gapSeconds)).toFixed(3);
+                    // Subtract the last drivers gap from the current and format for display
+                    interval = '+' + Math.abs((lastDriverGapTime - gapSeconds)).toFixed(3);
                     lastDriverGapTime = gapSeconds;
+                    
+                    // Remove the trailing 's' from gap if it exists
+                    gap = gap.replace('s', '');
                 }
             }
 
             const gridPosition = gridPositions[driverName] || '-';
             const gain = gridPosition !== '-' ? parseInt(gridPosition) - parseInt(position) : '-';
-
-            // Remove the trailing 's' from gap if it exists
-            gap = gap.replace('s', '');
 
             const resultLine = `|{{RaceResults/Row|pos=${position}` +
                                 ` |driver=${driverName}` +
@@ -199,7 +196,7 @@ document.getElementById('fetchResults').addEventListener('click', async () => {
                                 ` |grid=${gridPosition}` +
                                 ` |gain=${gain}` +
                                 ` |gap=${gap.toUpperCase()}` +
-                                ` |interval=+${interval}\n` +
+                                ` |interval=${interval}\n` +
                                 `|pits=` +
                                 ` |tyres=` +
                                 ` |points=${points}\n}}\n`;
