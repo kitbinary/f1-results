@@ -17,11 +17,48 @@
             </ul>
         </nav>
         <div class="header-content">
-            <h1>Kit's F1 Formatter - Practice</h1>
-            <input type="text" id="urlInput" placeholder="URL - e.g. https://www.formula1.com/en/results/2024/races/1243/netherlands/practice/1" value="https://www.formula1.com/en/results/2024/races/1243/netherlands/practice/1">
+            <h1>Kit's F1 Formatter</h1>
+
+            <div id="dropdownSelect">
+                <select id="year">
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                </select>
+
+                <select id="raceWeekend">
+                    <option value="bahrain">Bahrain</option>
+                    <option value="saudi-arabia">Saudi Arabia</option>
+                    <option value="australia">Australia</option>
+                    <option value="netherlands">Netherlands</option>
+                </select>
+
+                <select id="sessionType">
+                    <option value="race">Race</option>
+                    <option value="free-practice">Free Practice</option>
+                    <!-- 
+                    <option value="qualifying">Qualifying (WIP)</option>
+                    <option value="sprint-race">Sprint Race (WIP)</option>
+                    <option value="sprint-qualifying">Sprint Qualifying (WIP)</option>
+                    -->
+                </select>
+                    
+                <select id="practiceNumber" style="display:inline;">
+                    <option value="1">FP 1</option>
+                    <option value="2">FP 2</option>
+                    <option value="3">FP 3</option>
+                </select>
+            </div>
+
+            <input type="text" id="urlInput" style="display:none;" placeholder="URL - e.g. https://www.formula1.com/en/results/2024/races/1243/netherlands/practice/1" value="https://www.formula1.com/en/results/2024/races/1243/netherlands/practice/1">
+            
             <br>
             <button id="fetchResults">Fetch Results</button>
             <button id="selectAll">Select All</button>
+            <button id="showURLInput">Switch Input</button>
+
             <p><b>Full support for 2020-2024 - other years may be missing teams/flags!</b></p>
             <p>Created by kitbinary -  reach out on Discord for help!</p>
         </div>

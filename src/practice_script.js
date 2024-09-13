@@ -1,7 +1,9 @@
 document.getElementById('fetchResults').addEventListener('click', async () => {
-    const url = document.getElementById('urlInput').value;
+    const url = document.getElementById('urlInput');
+    const raceWeekend = document.getElementById('raceWeekend').value;
+    const selectedSession = document.getElementById('selectedSession').value;
 
-    if (!url) {
+    if (!url.value && url.style.display === 'inline') {
         alert("Please enter a URL.");
         return;
     }
@@ -157,4 +159,30 @@ document.getElementById('selectAll').addEventListener('click', () => {
     const sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
+});
+
+// Dropdown for Free Practice selection
+document.getElementById('sessionType').addEventListener('change', function() {
+    const sessionType = this.value;
+    const practiceNumber = document.getElementById('practiceNumber');
+
+    if (sessionType === 'free-practice') {
+        practiceNumber.style.display = 'inline';
+    } else {
+        practiceNumber.style.display = 'none';
+    }
+});
+
+// Add event listener for the "Show URL Input" button
+document.getElementById('showURLInput').addEventListener('click', () => {
+    const urlInput = document.getElementById('urlInput');
+    const dropdownSelect = document.getElementById('dropdownSelect');
+    
+    if (urlInput.style.display === 'none') {
+        urlInput.style.display = 'inline';
+        dropdownSelect.style.display = 'none';
+    } else {
+        urlInput.style.display = 'none';
+        dropdownSelect.style.display = 'inline';
+    }
 });

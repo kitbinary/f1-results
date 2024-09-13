@@ -114,3 +114,23 @@ th {
 tr:nth-child(even) {
     background-color: #f9f9f9;
 }
+
+select {
+    padding: 0.75em;
+    margin: 0.5em;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+    color: #333;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+select:hover {
+    background-color: #e0e0e0;
+}
+
+select:focus {
+    outline: none;
+    border: 2px solid #333;
+}
